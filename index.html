@@ -74,9 +74,9 @@
             const updateSubmitButtonState = () => {
                 const selectedKoma = $("#koma-select").val();
                 const checkedCount = $(".lecture-checkbox:checked").length;
-                const maxSelection = selectedKoma === "free" ? 1 : parseInt(selectedKoma);
+                const maxSelection = selectedKoma === "free" ? 1 : parseInt(selectedKoma)+1;
 
-                if (checkedCount === maxSelection) {
+                if (checkedCount === maxSelection || selectedKoma === "10") {
                     $("input[type='submit']").prop("disabled", false);
                 } else {
                     $("input[type='submit']").prop("disabled", true);
