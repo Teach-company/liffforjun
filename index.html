@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -50,16 +49,16 @@
         $(document).ready(function () {
             const liffId = "2006792721-7m6XDB22"; // 正しいLIFF IDを確認
             const lectures = [
-                "第1回：3/27（木） 9:00～10:00<br>数学:正負の数　（概念と加減）",
-                "第2回：3/28（金） 9:00～10:00<br>英語:基本的な読み書き、簡単な挨拶表現",
-                "第3回：3/29（土） 9:00～10:00<br>数学:正負の数（乗除法、指数）",
-                "第4回：3/30（日） 9:00～10:00<br>英語:be動詞（肯定文、否定文）",
-                "第5回：3/31（月） 9:00～10:00<br>数学:文字と式（基本計算、小数・分数の操作を含む）",
-                "第6回：4/1（火） 9:00～10:00<br>英語:be動詞（疑問文＋会話例）",
-                "第7回：4/2（水） 9:00～10:00<br>数学:一次方程式、比例式（基礎）",
-                "第8回：4/3（木） 9:00～10:00<br>英語:一般動詞 (He Sheなどを使った文)",
-                "第9回：4/4（金） 9:00～10:00<br>数学:一次方程式（応用：小数/分数を含む）",
-                "第10回：4/5（土） 9:00～10:00<br>英語:単語の覚え方＋学習の進め方"
+                "第1回：3/27（木） 9:00～10:00<br>数学 　正負の数　（概念と加減）",
+                "第2回：3/28（金） 9:00～10:00<br>英語　基本的な読み書き、簡単な挨拶表現",
+                "第3回：3/29（土） 9:00～10:00<br>数学　正負の数（乗除法、指数）",
+                "第4回：3/30（日） 9:00～10:00<br>英語　be動詞（肯定文、否定文）",
+                "第5回：3/31（月） 9:00～10:00<br>数学　文字と式（基本計算、小数・分数の操作を含む）",
+                "第6回：4/1（火） 9:00～10:00<br>英語　be動詞（疑問文＋会話例）",
+                "第7回：4/2（水） 9:00～10:00<br>数学　一次方程式、比例式（基礎）",
+                "第8回：4/3（木） 9:00～10:00<br>英語　一般動詞 (He Sheなどを使った文)",
+                "第9回：4/4（金） 9:00～10:00<br>数学　一次方程式（応用：小数/分数を含む）",
+                "第10回：4/5（土） 9:00～10:00<br>英語　単語の覚え方＋学習の進め方"
             ];
 
             // 講座一覧を生成
@@ -72,35 +71,39 @@
                 $("#lecture-options").append(checkbox);
             });
 
-                   // コマ数に応じた選択制御
+            const updateSubmitButtonState = () => {
+                const selectedKoma = $("#koma-select").val();
+                const checkedCount = $(".lecture-checkbox:checked").length;
+                const maxSelection = selectedKoma === "free" ? 1 : parseInt(selectedKoma);
+
+                if (checkedCount === maxSelection) {
+                    $("input[type='submit']").prop("disabled", false);
+                } else {
+                    $("input[type='submit']").prop("disabled", true);
+                }
+            };
+
             $("#koma-select").change(function () {
                 const selectionType = $(this).val();
-                const maxSelection = selectionType === "free" ? 1 : (selectionType === "10" ? 10 : parseInt(selectionType) + 1); // トータル選択可能コマ数
+                const maxSelection = selectionType === "free" ? 1 : parseInt(selectionType);
 
-                $(".lecture-checkbox").prop("checked", false).prop("disabled", false); // 初期化
-
+                $(".lecture-checkbox").prop("checked", false).prop("disabled", false);
                 if (selectionType === "free") {
                     $(".lecture-checkbox").prop("checked", false).prop("disabled", true);
                     $("#lecture-0").prop("checked", true).prop("disabled", true);
-                } else if (selectionType === "10") {
-                    $(".lecture-checkbox").prop("checked", true).prop("disabled", true); // すべて選択
-                } else {
-                    // 第1回目を固定選択
-                    $("#lecture-0").prop("checked", true).prop("disabled", true);
                 }
 
-                // 講座チェックボックスの変更時の挙動を設定
                 $(".lecture-checkbox").off("change").on("change", function () {
                     if ($(".lecture-checkbox:checked").length >= maxSelection) {
                         $(".lecture-checkbox:not(:checked)").prop("disabled", true);
                     } else {
                         $(".lecture-checkbox").prop("disabled", false);
-                        $("#lecture-0").prop("disabled", true); // 第1回目は常に固定
+                        $("#lecture-0").prop("disabled", true);
                     }
                     updateSubmitButtonState();
                 });
 
-                updateSubmitButtonState(); // 初期状態を更新
+                updateSubmitButtonState();
             });
 
             // LIFF 初期化
@@ -117,20 +120,6 @@
                 .catch(error => {
                     console.error("LIFF 初期化エラー:", error);
                 });
-        });
-
-        // フォーム送信ボタンの有効化制御
-            function updateSubmitButtonState() {
-                const nameFilled = $('input[name="name"]').val().trim() !== "";
-                const komaSelected = $("#koma-select").val() !== null;
-                const lecturesSelected = $(".lecture-checkbox:checked").length > 0;
-
-                if (nameFilled && komaSelected && lecturesSelected) {
-                    $('input[type="submit"]').prop("disabled", false);
-                } else {
-                    $('input[type="submit"]').prop("disabled", true);
-                }
-            }
         
          // フォーム送信処理
             $("form").submit(function () {
