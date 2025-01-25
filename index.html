@@ -122,11 +122,27 @@
          // フォーム送信処理
             $("form").submit(function () {
                 const name = $('input[name="name"]').val();
+                const grade = $('select[name="grade"]').val();
                 const selectedKoma = $('#koma-select').val();
                 const selectedLectures = $(".lecture-checkbox:checked").map(function () {
                     return $(this).val();
                 }).get();
 
+                const msg = `#新中学生講座-申込フォーム\n名前: ${name}\n購入コマ数: ${selectedKoma === "free" ? "★第1回分無料" : selectedKoma + "コマ"}\n選択した講座:\n${selectedLectures.join("\n")}`;
+
+                if (liff.isInClient()) {
+                    liff.sendMessages([{ type: 'text', text: msg }])
+                        .then(() => {
+                            alert("メッセージが送信されました");
+                            liff.closeWindow();
+                        })
+                        .catch(error => console.error("メッセージ送信失敗:", error));
+                } else {
+                    alert("LINE アプリ内で実行してください");
+                }
+                return false;
+            });
+        });
     </script>
 </body>
 </html>
