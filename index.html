@@ -119,6 +119,19 @@
                 });
         });
 
+        // フォーム送信ボタンの有効化制御
+            function updateSubmitButtonState() {
+                const nameFilled = $('input[name="name"]').val().trim() !== "";
+                const komaSelected = $("#koma-select").val() !== null;
+                const lecturesSelected = $(".lecture-checkbox:checked").length > 0;
+
+                if (nameFilled && komaSelected && lecturesSelected) {
+                    $('input[type="submit"]').prop("disabled", false);
+                } else {
+                    $('input[type="submit"]').prop("disabled", true);
+                }
+            }
+        
          // フォーム送信処理
             $("form").submit(function () {
                 const name = $('input[name="name"]').val();
