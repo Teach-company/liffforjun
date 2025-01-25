@@ -71,39 +71,35 @@
                 $("#lecture-options").append(checkbox);
             });
 
-            const updateSubmitButtonState = () => {
-                const selectedKoma = $("#koma-select").val();
-                const checkedCount = $(".lecture-checkbox:checked").length;
-                const maxSelection = selectedKoma === "free" ? 1 : parseInt(selectedKoma);
-
-                if (checkedCount === maxSelection) {
-                    $("input[type='submit']").prop("disabled", false);
-                } else {
-                    $("input[type='submit']").prop("disabled", true);
-                }
-            };
-
+                   // コマ数に応じた選択制御
             $("#koma-select").change(function () {
                 const selectionType = $(this).val();
-                const maxSelection = selectionType === "free" ? 1 : parseInt(selectionType);
+                const maxSelection = selectionType === "free" ? 1 : (selectionType === "10" ? 10 : parseInt(selectionType) + 1); // トータル選択可能コマ数
 
-                $(".lecture-checkbox").prop("checked", false).prop("disabled", false);
+                $(".lecture-checkbox").prop("checked", false).prop("disabled", false); // 初期化
+
                 if (selectionType === "free") {
                     $(".lecture-checkbox").prop("checked", false).prop("disabled", true);
                     $("#lecture-0").prop("checked", true).prop("disabled", true);
+                } else if (selectionType === "10") {
+                    $(".lecture-checkbox").prop("checked", true).prop("disabled", true); // すべて選択
+                } else {
+                    // 第1回目を固定選択
+                    $("#lecture-0").prop("checked", true).prop("disabled", true);
                 }
 
+                // 講座チェックボックスの変更時の挙動を設定
                 $(".lecture-checkbox").off("change").on("change", function () {
                     if ($(".lecture-checkbox:checked").length >= maxSelection) {
                         $(".lecture-checkbox:not(:checked)").prop("disabled", true);
                     } else {
                         $(".lecture-checkbox").prop("disabled", false);
-                        $("#lecture-0").prop("disabled", true);
+                        $("#lecture-0").prop("disabled", true); // 第1回目は常に固定
                     }
                     updateSubmitButtonState();
                 });
 
-                updateSubmitButtonState();
+                updateSubmitButtonState(); // 初期状態を更新
             });
 
             // LIFF 初期化
