@@ -118,6 +118,15 @@
                     console.error("LIFF 初期化エラー:", error);
                 });
         });
+
+         // フォーム送信処理
+            $("form").submit(function () {
+                const name = $('input[name="name"]').val();
+                const selectedKoma = $('#koma-select').val();
+                const selectedLectures = $(".lecture-checkbox:checked").map(function () {
+                    return $(this).val();
+                }).get();
+
     </script>
 </body>
 </html>
