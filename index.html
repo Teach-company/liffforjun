@@ -133,24 +133,25 @@
             });
 
             liff.init({ liffId: liffId })
-                .then(() => {
-                    if (liff.isLoggedIn()) {
-                        liff.getProfile().then(profile => {
-                            $('input[name="line-name"]').val(profile.displayName);
-                        });
-                    } else {
-                        liff.login();
-                    }
-                });
+    .then(() => {
+        if (liff.isLoggedIn()) {
+            liff.getProfile().then(profile => {
+                $('input[name="line-name"]').val(profile.displayName);
+                window.lineName = profile.displayName; // ここでグローバル変数に保存
+            });
+        } else {
+            liff.login();
+        }
+    });
 
-            $("form").submit(function () {
-                const name = `${$('input[name="last-name"]').val()} ${$('input[name="first-name"]').val()}`;
-                const nameKana = `${$('input[name="last-name-kana"]').val()} ${$('input[name="first-name-kana"]').val()}`;
-                const grade = $('select[name="grade"]').val();
-                const selectedKoma = $('#koma-select').val();
-                const selectedLectures = $(".lecture-checkbox:checked").map(function () {
-                    return $(this).val();
-                }).get();
+$("form").submit(function () {
+    const name = `${$('input[name="last-name"]').val()} ${$('input[name="first-name"]').val()}`;
+    const nameKana = `${$('input[name="last-name-kana"]').val()} ${$('input[name="first-name-kana"]').val()}`;
+    const grade = $('select[name="grade"]').val();
+    const selectedKoma = $('#koma-select').val();
+    const selectedLectures = $(".lecture-checkbox:checked").map(function () {
+        return $(this).val();
+    }).get();
 
                 const msg = `#講座申込フォーム\nLINE名: ${window.lineName}\n生徒様のお名前: ${name}\nふりがな: ${nameKana}\n学年: ${grade}\n購入コマ数: ${selectedKoma === "free" ? "★第1回分無料" : selectedKoma + "コマ"}\n選択した講座:\n${selectedLectures.join("\n")}`;                
                 liff.sendMessages([{ type: 'text', text: msg }]).then(() => {
