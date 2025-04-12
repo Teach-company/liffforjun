@@ -3,165 +3,727 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#新中学生準備講座-申込フォーム</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <title>オンライン家庭教師予約システム</title>
     <style>
-        .name-row, .furigana-row {
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f8fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4a6da7;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header-content {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        .name-row input, .furigana-row input {
-            flex: 1;
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
         }
-        input[type="submit"] {
+        .view-selector {
+            display: flex;
+        }
+        .view-selector button {
+            background: none;
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .view-selector button.active {
+            background-color: white;
+            color: #4a6da7;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            color: #4a6da7;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .tab-content.active {
             display: block;
-            width: 50%;
-            margin: 20px auto;
-            padding: 15px;
-            font-size: 1.2em;
+        }
+        .card {
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4a6da7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #3a5d97;
+        }
+        .calendar {
+            display: flex;
+            flex-direction: column;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .calendar-nav button {
+            background: none;
+            border: none;
+            color: #4a6da7;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+        .calendar-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-day-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #f0f5ff;
+            border-radius: 4px;
+        }
+        .calendar-day {
+            min-height: 120px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 5px;
+            position: relative;
+        }
+        .calendar-day.disabled {
+            background-color: #f5f5f5;
+            color: #ccc;
+        }
+        .calendar-day-number {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .time-slot {
+            font-size: 12px;
+            padding: 3px 5px;
+            background-color: #e9f0ff;
+            margin-bottom: 3px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .time-slot:hover {
+            background-color: #d1e1ff;
+        }
+        .time-slot.available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .time-slot.booked {
+            background-color: #f8d7da;
+            color: #721c24;
+            cursor: not-allowed;
+        }
+        .recurring-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .recurring-option input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        .user-info {
+            background-color: #e9f0ff;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .booking-list {
+            list-style: none;
+            padding: 0;
+        }
+        .booking-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .booking-item:last-child {
+            border-bottom: none;
+        }
+        .booking-actions button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .booking-actions button.cancel {
+            background-color: #dc3545;
+        }
+        .booking-actions button.cancel:hover {
+            background-color: #c82333;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .time-ranges {
+            margin-top: 15px;
+        }
+        .time-range {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .time-range select {
+            width: 120px;
+            margin: 0 10px;
+        }
+        .time-range button {
+            background: none;
+            color: #dc3545;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .add-range {
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border: 1px dashed #ccc;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #4a6da7;
+        }
+        .add-range:hover {
+            background-color: #e9ecef;
+        }
+        .weekday-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .weekday-btn {
+            flex: 1;
+            min-width: 40px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+        }
+        .weekday-btn.selected {
+            background-color: #4a6da7;
+            color: white;
+            border-color: #4a6da7;
+        }
+        .teacher-result {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .teacher-result:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .dashboard {
+            display: none;
+        }
+        .dashboard.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <form class="w-75 mx-auto mt-5">
-        <!-- LINE名 -->
-        <p class="mt-3">LINE名</p>
-        <input class="form-control w-100 mt-1" name="line-name" placeholder="LINE名を取得中..." readonly>
-
-        <!-- 漢字氏名 -->
-        <p class="mt-3">生徒様のお名前（漢字）</p>
-        <div class="name-row">
-            <input class="form-control" name="last-name" placeholder="姓" required>
-            <input class="form-control" name="first-name" placeholder="名" required>
+    <div class="header">
+        <div class="header-content">
+            <h1>オンライン家庭教師予約システム</h1>
+            <div class="view-selector">
+                <button id="teacher-view-btn" class="active">先生ビュー</button>
+                <button id="student-view-btn">生徒ビュー</button>
+            </div>
         </div>
+    </div>
 
-        <!-- ふりがな -->
-        <p class="mt-3">生徒様のお名前（ふりがな）</p>
-        <div class="furigana-row">
-            <input class="form-control" name="last-name-kana" placeholder="せい" required>
-            <input class="form-control" name="first-name-kana" placeholder="めい" required>
-        </div>
-
-        <!-- 学年 -->
-        <p class="mt-3">学年</p>
-        <select class="form-control w-100 mt-1" name="grade" required>
-            <option value="" disabled selected>選択してください</option>
-            <option>小学6年（新中学1年生）</option>
-        </select>
-
-        <!-- 講座の購入コマ数 -->
-        <p class="mt-3">講座の購入コマ数</p>
-        <select class="form-control w-100 mt-1" id="koma-select" required>
-            <option value="" disabled selected>選択してください</option>
-            <option value="free">★第1回分無料</option>
-            <option value="1">1コマ（¥1,000） ★第1回分無料</option>
-            <option value="3">3コマ（¥2,700） ★第1回分無料</option>
-            <option value="5">5コマ（¥4,250） ★第1回分無料</option>
-            <option value="10">10コマ（¥8,000） ★第1回分無料</option>
-        </select>
-
-        <!-- 講座選択 -->
-        <p class="mt-3">講座選択</p>
-        <div id="lecture-options" class="form-group">
-            <!-- 講座リストを動的に生成 -->
-        </div>
-
-        <input type="submit" class="mt-4 btn btn-primary" value="送信" disabled>
-    </form>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
-        $(document).ready(function () {
-            const liffId = "2006792721-7m6XDB22"; // LIFF ID
-            const lectures = [
-                "第1回：3/27（木） 9:00～10:00<br>数学 　正負の数　（概念と加減）",
-                "第2回：3/28（金） 9:00～10:00<br>英語　基本的な読み書き、簡単な挨拶表現",
-                "第3回：3/29（土） 9:00～10:00<br>数学　正負の数（乗除法、指数）",
-                "第4回：3/30（日） 9:00～10:00<br>英語　be動詞（肯定文、否定文）",
-                "第5回：3/31（月） 9:00～10:00<br>数学　文字と式（基本計算、小数・分数の操作を含む）",
-                "第6回：4/1（火） 9:00～10:00<br>英語　be動詞（疑問文＋会話例）",
-                "第7回：4/2（水） 9:00～10:00<br>数学　一次方程式、比例式（基礎）",
-                "第8回：4/3（木） 9:00～10:00<br>英語　一般動詞 (He Sheなどを使った文)",
-                "第9回：4/4（金） 9:00～10:00<br>数学　一次方程式（応用：小数/分数を含む）",
-                "第10回：4/5（土） 9:00～10:00<br>英語　単語の覚え方＋学習の進め方"
-            ];
-
-            lectures.forEach((lecture, index) => {
-                $("#lecture-options").append(`
-                    <div class="form-check">
-                        <input class="form-check-input lecture-checkbox" type="checkbox" value="${lecture}" id="lecture-${index}">
-                        <label class="form-check-label" for="lecture-${index}">${lecture}</label>
+    <div class="container">
+        <!-- 先生用ダッシュボード -->
+        <div id="teacher-dashboard" class="dashboard active">
+            <div class="user-info">
+                <h2>鈴木先生</h2>
+                <p>専門: 数学、英語</p>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="teacher-calendar">カレンダー</div>
+                <div class="tab" data-tab="teacher-schedule">授業可能時間設定</div>
+                <div class="tab" data-tab="teacher-bookings">予約一覧</div>
+            </div>
+            
+            <div id="teacher-calendar" class="tab-content active">
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <div class="calendar-nav">
+                            <button id="prev-month">&lt;</button>
+                            <div class="calendar-title">2024年4月</div>
+                            <button id="next-month">&gt;</button>
+                        </div>
                     </div>
-                `);
-            });
+                    <div class="calendar-grid">
+                        <div class="calendar-day-header">日</div>
+                        <div class="calendar-day-header">月</div>
+                        <div class="calendar-day-header">火</div>
+                        <div class="calendar-day-header">水</div>
+                        <div class="calendar-day-header">木</div>
+                        <div class="calendar-day-header">金</div>
+                        <div class="calendar-day-header">土</div>
+                        
+                        <!-- 前月の日付 -->
+                        <div class="calendar-day disabled">
+                            <div class="calendar-day-number">31</div>
+                        </div>
+                        <!-- 4月の日付 -->
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">1</div>
+                            <div class="time-slot available">9:00-10:00</div>
+                            <div class="time-slot booked">10:30-12:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">2</div>
+                            <div class="time-slot available">9:00-10:00</div>
+                            <div class="time-slot available">10:30-12:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">3</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">4</div>
+                            <div class="time-slot booked">18:00-19:30</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">5</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">6</div>
+                        </div>
+                        
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">7</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">8</div>
+                            <div class="time-slot available">9:00-10:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">9</div>
+                            <div class="time-slot available">9:00-10:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">10</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">11</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">12</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">13</div>
+                        </div>
+                        
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">14</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">15</div>
+                            <div class="time-slot available">9:00-10:00</div>
+                        </div>
+                        <!-- 残りの日付 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="teacher-schedule" class="tab-content">
+                <div class="card">
+                    <h2>授業可能時間設定</h2>
+                    <div class="form-group">
+                        <label for="available-time-from">開始時間</label>
+                        <select id="available-time-from">
+                            <option value="8:00">8:00</option>
+                            <option value="9:00">9:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                            <option value="18:00">18:00</option>
+                            <option value="19:00">19:00</option>
+                            <option value="20:00">20:00</option>
+                            <option value="21:00">21:00</option>
+                            <option value="22:00">22:00</option>
+                            <option value="23:00">23:00</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="available-time-to">終了時間</label>
+                        <select id="available-time-to">
+                            <option value="9:00">9:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                            <option value="18:00">18:00</option>
+                            <option value="19:00">19:00</option>
+                            <option value="20:00">20:00</option>
+                            <option value="21:00">21:00</option>
+                            <option value="22:00">22:00</option>
+                            <option value="23:00">23:00</option>
+                            <option value="24:00">24:00</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="time-interval">時間枠間隔</label>
+                        <select id="time-interval">
+                            <option value="30">30分</option>
+                            <option value="60">1時間</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="min-booking-time">最短予約可能時間</label>
+                        <select id="min-booking-time">
+                            <option value="1">1時間後</option>
+                            <option value="2">2時間後</option>
+                            <option value="3">3時間後</option>
+                            <option value="6">6時間後</option>
+                            <option value="12">12時間後</option>
+                            <option value="24">24時間後</option>
+                        </select>
+                    </div>
+                    <button id="save-time-settings">保存</button>
+                </div>
+                
+                <div class="card">
+                    <h2>繰り返し予約設定</h2>
+                    <div class="form-group">
+                        <label>曜日選択</label>
+                        <div class="weekday-selector">
+                            <div class="weekday-btn" data-day="0">日</div>
+                            <div class="weekday-btn" data-day="1">月</div>
+                            <div class="weekday-btn" data-day="2">火</div>
+                            <div class="weekday-btn" data-day="3">水</div>
+                            <div class="weekday-btn" data-day="4">木</div>
+                            <div class="weekday-btn" data-day="5">金</div>
+                            <div class="weekday-btn" data-day="6">土</div>
+                        </div>
+                    </div>
+                    <div class="time-ranges">
+                        <div class="time-range">
+                            <select class="time-from">
+                                <option value="8:00">8:00</option>
+                                <option value="8:30">8:30</option>
+                                <option value="9:00">9:00</option>
+                                <option value="9:30">9:30</option>
+                                <option value="10:00">10:00</option>
+                                <option value="10:30">10:30</option>
+                                <option value="11:00">11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="12:00">12:00</option>
+                                <option value="12:30">12:30</option>
+                                <option value="13:00">13:00</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="14:30">14:30</option>
+                                <option value="15:00">15:00</option>
+                                <option value="15:30">15:30</option>
+                                <option value="16:00">16:00</option>
+                                <option value="16:30">16:30</option>
+                                <option value="17:00">17:00</option>
+                                <option value="17:30">17:30</option>
+                                <option value="18:00">18:00</option>
+                                <option value="18:30">18:30</option>
+                                <option value="19:00">19:00</option>
+                                <option value="19:30">19:30</option>
+                                <option value="20:00">20:00</option>
+                                <option value="20:30">20:30</option>
+                                <option value="21:00">21:00</option>
+                                <option value="21:30">21:30</option>
+                                <option value="22:00">22:00</option>
+                                <option value="22:30">22:30</option>
+                                <option value="23:00">23:00</option>
+                                <option value="23:30">23:30</option>
+                            </select>
+                            <span>から</span>
+                            <select class="time-to">
+                                <option value="8:30">8:30</option>
+                                <option value="9:00">9:00</option>
+                                <option value="9:30">9:30</option>
+                                <option value="10:00">10:00</option>
+                                <option value="10:30">10:30</option>
+                                <option value="11:00">11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="12:00">12:00</option>
+                                <option value="12:30">12:30</option>
+                                <option value="13:00">13:00</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="14:30">14:30</option>
+                                <option value="15:00">15:00</option>
+                                <option value="15:30">15:30</option>
+                                <option value="16:00">16:00</option>
+                                <option value="16:30">16:30</option>
+                                <option value="17:00">17:00</option>
+                                <option value="17:30">17:30</option>
+                                <option value="18:00">18:00</option>
+                                <option value="18:30">18:30</option>
+                                <option value="19:00">19:00</option>
+                                <option value="19:30">19:30</option>
+                                <option value="20:00">20:00</option>
+                                <option value="20:30">20:30</option>
+                                <option value="21:00">21:00</option>
+                                <option value="21:30">21:30</option>
+                                <option value="22:00">22:00</option>
+                                <option value="22:30">22:30</option>
+                                <option value="23:00">23:00</option>
+                                <option value="23:30">23:30</option>
+                                <option value="24:00">24:00</option>
+                            </select>
+                            <button class="remove-range">×</button>
+                        </div>
+                    </div>
+                    <div class="add-range">+ 時間帯を追加</div>
+                    <button id="save-recurring">設定を保存</button>
+                </div>
+            </div>
+            
+            <div id="teacher-bookings" class="tab-content">
+                <h2>予約一覧</h2>
+                <ul class="booking-list">
+                    <li class="booking-item">
+                        <div class="booking-info">
+                            <div><strong>佐藤さん</strong></div>
+                            <div>2024年4月1日 10:30-12:00 (90分)</div>
+                        </div>
+                        <div class="booking-actions">
+                            <button>詳細</button>
+                            <button class="cancel">キャンセル</button>
+                        </div>
+                    </li>
+                    <li class="booking-item">
+                        <div class="booking-info">
+                            <div><strong>田中さん</strong></div>
+                            <div>2024年4月4日 18:00-19:30 (90分)</div>
+                        </div>
+                        <div class="booking-actions">
+                            <button>詳細</button>
+                            <button class="cancel">キャンセル</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 生徒用ダッシュボード -->
+        <div id="student-dashboard" class="dashboard">
+            <div class="user-info">
+                <h2>佐藤さん</h2>
+                <p>学年: 高校2年</p>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="student-search">先生検索</div>
+                <div class="tab" data-tab="student-bookings">予約一覧</div>
+            </div>
+            
+            <div id="student-search" class="tab-content active">
+                <div class="card">
+                    <h2>先生を探す</h2>
+                    <div class="form-group">
+                        <label for="subject">科目</label>
+                        <select id="subject">
+                            <option value="">全ての科目</option>
+                            <option value="math">数学</option>
+                            <option value="english">英語</option>
+                            <option value="japanese">国語</option>
+                            <option value="science">理科</option>
+                            <option value="social">社会</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">日付</label>
+                        <input type="date" id="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="time">時間帯</label>
+                        <select id="time">
+                            <option value="">指定なし</option>
+                            <option value="morning">午前 (8:00-12:00)</option>
+                            <option value="afternoon">午後 (12:00-18:00)</option>
+                            <option value="evening">夕方・夜 (18:00-24:00)</option>
+                        </select>
+                    </div>
+                    <button id="search-teachers">検索</button>
+                </div>
+                
+                <div class="card">
+                    <h2>検索結果</h2>
+                    <div class="teacher-result">
+                        <h3>鈴木先生（数学、英語）</h3>
+                        <p>評価: ★★★★☆ (4.5)</p>
+                        <p>利用可能時間:</p>
+                        <div class="time-slots">
+                            <div class="time-slot available">4月1日 9:00-10:00</div>
+                            <div class="time-slot available">4月2日 9:00-10:00</div>
+                            <div class="time-slot available">4月2日 10:30-12:00</div>
+                        </div>
+                        <button id="book-teacher-1" class="book-button">予約する</button>
+                    </div>
+                    
+                    <div class="teacher-result">
+                        <h3>山田先生（理科、数学）</h3>
+                        <p>評価: ★★★★★ (4.8)</p>
+                        <p>利用可能時間:</p>
+                        <div class="time-slots">
+                            <div class="time-slot available">4月1日 13:00-14:00</div>
+                            <div class="time-slot available">4月3日 15:00-16:00</div>
+                        </div>
+                        <button id="book-teacher-2" class="book-button">予約する</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="student-bookings" class="tab-content">
+                <h2>予約一覧</h2>
+                <ul class="booking-list">
+                    <li class="booking-item">
+                        <div class="booking-info">
+                            <div><strong>鈴木先生（数学）</strong></div>
+                            <div>2024年4月1日 10:30-12:00 (90分)</div>
+                        </div>
+                        <div class="booking-actions">
+                            <button>詳細</button>
+                            <button class="cancel">キャンセル</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-            const updateSubmitButtonState = () => {
-                const selectedKoma = $("#koma-select").val();
-                const checkedCount = $(".lecture-checkbox:checked").length;
-                const maxSelection = selectedKoma === "free" ? 1 : parseInt(selectedKoma) + 1;
-
-                $("input[type='submit']").prop("disabled", checkedCount !== maxSelection && selectedKoma !== "10");
-            };
-
-            $("#koma-select").change(function () {
-                const selectionType = $(this).val();
-                const maxSelection = selectionType === "free" ? 1 : (selectionType === "10" ? 10 : parseInt(selectionType) + 1);
-
-                $(".lecture-checkbox").prop("checked", false).prop("disabled", false);
-
-                if (selectionType === "free") {
-                    $(".lecture-checkbox").prop("checked", false).prop("disabled", true);
-                    $("#lecture-0").prop("checked", true).prop("disabled", true);
-                } else if (selectionType === "10") {
-                    $(".lecture-checkbox").prop("checked", true).prop("disabled", true);
-                } else {
-                    $("#lecture-0").prop("checked", true).prop("disabled", true);
-                }
-
-                $(".lecture-checkbox").off("change").on("change", function () {
-                    if ($(".lecture-checkbox:checked").length >= maxSelection) {
-                        $(".lecture-checkbox:not(:checked)").prop("disabled", true);
-                    } else {
-                        $(".lecture-checkbox").prop("disabled", false);
-                        $("#lecture-0").prop("disabled", true);
-                    }
-                    updateSubmitButtonState();
-                });
-
-                updateSubmitButtonState();
-            });
-
-            liff.init({ liffId: liffId })
-    .then(() => {
-        if (liff.isLoggedIn()) {
-            liff.getProfile().then(profile => {
-                $('input[name="line-name"]').val(profile.displayName);
-                window.lineName = profile.displayName; // ここでグローバル変数に保存
-            });
-        } else {
-            liff.login();
-        }
-    });
-
-$("form").submit(function () {
-    const name = `${$('input[name="last-name"]').val()} ${$('input[name="first-name"]').val()}`;
-    const nameKana = `${$('input[name="last-name-kana"]').val()} ${$('input[name="first-name-kana"]').val()}`;
-    const grade = $('select[name="grade"]').val();
-    const selectedKoma = $('#koma-select').val();
-    const selectedLectures = $(".lecture-checkbox:checked").map(function () {
-        return $(this).val();
-    }).get();
-
-                const msg = `#講座申込フォーム\nLINE名: ${window.lineName}\n生徒様のお名前: ${name}\nふりがな: ${nameKana}\n学年: ${grade}\n購入コマ数: ${selectedKoma === "free" ? "★第1回分無料" : selectedKoma + "コマ"}\n選択した講座:\n${selectedLectures.join("\n")}`;                
-                liff.sendMessages([{ type: 'text', text: msg }]).then(() => {
-                    alert("メッセージが送信されました");
-                    liff.closeWindow();
-                });
-
-                return false;
-            });
-        });
-    </script>
-</body>
-</html>
+    <!-- 予約モーダル -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>授業予約</h2>
+            <p><strong>先生:</strong> <span id="booking-teacher">鈴木先生（数学、英語）</span></p>
+            <p><strong>日時:</strong> <span id="booking-date">2024年4月2日</span></p>
+            
+            <div class="form-group">
+                <label for="booking-time">時間帯</label>
+                <select id="booking-time">
+                    <option value="9:00-10:00">9:00-10:00 (60分)</option>
+                    <option value="10:30-12:00">10:30-12:00 (90分)</option>
+                </select>
+            </div>
